@@ -38,7 +38,6 @@ def seguirParaApostila():
     driver.get(link_da_apostial)
     time.sleep(2)
 
-
 def verificarAcerto(link_da_questao):
     print("Verificando acerto...")
     try:
