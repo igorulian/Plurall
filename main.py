@@ -8,17 +8,20 @@ import crendentials
 from buttons import clickClass
 from buttons import clickXPath
 import os
+import random
 
 
 link_da_apostial = 'https://atividades.plurall.net/material/2748190/'
 
-forcar_bloco = 0
-forcar_tarefa = 0
+forcar_bloco = int(input("Digite o bloco que deseja forçar: "))## bloco 41; tarefa2
+forcar_tarefa = int(input("Digite a tarefa que deseja forçar: ")) 
+
+
 
 option = Options()
 option.headless = False
 
-driver = webdriver.Firefox(executable_path=r'C:\Users\Particular\Documents\GeckoDriver\geckodriver.exe', options=option)
+driver = webdriver.Firefox(executable_path=r'C:\Users\IgorU\AppData\Local\Geckodriver\geckodriver.exe', options=option)
 
 def logar():
     print("Autenticando...")
@@ -173,16 +176,24 @@ def resolverQuestao(x):
     for y in range(1,4):
         time.sleep(2)
 
+        while True:
+            alternativa = random.randint(1,4)
+            # print(f'Alternativa: {alternativa}')
+            if not alternativa in chutes_efetuados:
+                chutes_efetuados.append(alternativa)
+                print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
+                break
+
+
         if verificarQuestaoDiscursiva():
             resolverQuestaoDiscursiva()
             break
 
         #Resolver questão multipla escolha
-        print(f'    Efetuado chute.. {y}')
-        chutes_efetuados.append(y)
-        driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{y}]/span[1]')                 
-        clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{y}]/span[1]',driver)
-        print(f'    Chute {y} efetuado!')
+        print(f'    Efetuado chute.. {alternativa}')
+        driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]')                 
+        clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]',driver)
+        print(f'    Chute {alternativa} efetuado!')
 
         time.sleep(2)
 
@@ -221,16 +232,24 @@ def resolverQuestaoSessaoDeExercicios(x):
     for y in range(1,4):
         time.sleep(2)
 
+        while True:
+            alternativa = random.randint(1,4)
+            # print(f'Alternativa: {alternativa}')
+            if not alternativa in chutes_efetuados:
+                chutes_efetuados.append(alternativa)
+                print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
+                break
+
         if verificarQuestaoDiscursiva():
             resolverQuestaoDiscursiva()
             break
 
         #Resolver questão multipla escolha
-        print(f'    Efetuado chute.. {y}')
+        print(f'    Efetuado chute.. {alternativa}')
         chutes_efetuados.append(y)
-        driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{y}]/span[1]')    
-        clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{y}]/span[1]',driver)
-        print(f'    Chute {y} efetuado!')
+        driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]')    
+        clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]',driver)
+        print(f'    Chute {alternativa} efetuado!')
 
         time.sleep(2)
 
@@ -307,56 +326,49 @@ def resolverBlocos():
     for bloco in range(bloco_inicial,100):
         seguirParaApostila()
 
-        # for _ in rage(bloco * 10):
-        #     # Scrolla para baixo
-
-        print("Rolando pagina...")
-        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        print(f'Começando a resolver bloco {bloco}...')
-
-        #Scrolar
-        print("Scrollando até o bloco...")
-
-        for _ in range(int(bloco / 4)):
-            driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-            time.sleep(1.5)
-
-        #Scrolar
-
         time.sleep(2)
 
-        print("to no final da pagina?")
 
-        bloquin = driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div[2]/div/div[{bloco}]/section')
-        bloquin = bloquin.get_attribute('innerHTML').split(" ")
+        print(f'Começando a resolver bloco {bloco}...')
+        while True:
+            # print("Scrollando até o bloco...")
 
-        tarefas_dentro_do_bloquinho_y = 0
+            driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+            time.sleep(2)
 
-        for x in range(len(bloquin)):
-            if "<section" in bloquin[x]:
-                tarefas_dentro_do_bloquinho_y+= 1
+            try:
+                bloquin = driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div[2]/div/div[{bloco}]/section')
+                bloquin = bloquin.get_attribute('innerHTML').split(" ")
 
-        print(f'tarefas totais bloco {bloco}: {tarefas_dentro_do_bloquinho_y}')
+                tarefas_dentro_do_bloquinho_y = 0
+
+                for x in range(len(bloquin)):
+                    if "<section" in bloquin[x]:
+                        tarefas_dentro_do_bloquinho_y+= 1
+
+                print(f'tarefas totais bloco {bloco}: {tarefas_dentro_do_bloquinho_y}')
+                break
+            except:
+                print(" ")
 
         for tarefa in range(tarefa_inicial,tarefas_dentro_do_bloquinho_y + 1):
-            print(f' Começando a resolver tarefa, bloco {bloco}; tarefa{tarefa}')
+            print(f' Procurando tarefa, bloco {bloco}; tarefa{tarefa}...')
             seguirParaApostila()
 
             time.sleep(1)
-
-            #Scrolar
-            print("Scrollando até a tarefa...")
-
-            for _ in range(int(bloco / 4)):
+            print(f' Começando a resolver tarefa, bloco {bloco}; tarefa{tarefa}')
+            while True:
+                # print("Scrollando até a tarefa...")
                 driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-                time.sleep(1.5)
+                time.sleep(2)
 
-            #Scrolar
-            
-            resolverTarefa(bloco,tarefa)
+                try:  
+                    bloquin = driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div[2]/div/div[{bloco}]/section')
+                    resolverTarefa(bloco,tarefa)
+                    break
+                except:
+                    print(" ")
 
-    
-    
 
 def start():
     os.system("clear")
