@@ -11,10 +11,10 @@ import os
 import random
 
 
-link_da_apostial = 'https://atividades.plurall.net/material/2748190/'
+link_da_apostial = 'https://atividades.plurall.net/material/2580100/'
 
-forcar_bloco = int(input("Digite o bloco que deseja forçar: "))## bloco 41; tarefa2
-forcar_tarefa = int(input("Digite a tarefa que deseja forçar: ")) 
+forcar_bloco = int(input("Digite o bloco que deseja forçar: "))## bloco 28; tarefa 6
+forcar_tarefa = 0
 
 
 
@@ -147,47 +147,63 @@ def resolverQuestaoDiscursiva():
 
     print('Resposta discursiva enviada! ✔️')
 
-
-def resolverQuestao(x):
-
-    #Verificar Disponibilidade 
-    print("    ")
-    print("   Veriricando Disponibilidade Da Questão...")
+def verificarDisponibilidadeQuestao(x):
     try:
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[3]/a[{x}]/div[@class="jsx-2800942400 exercise-card correct"]')
         print("   Resposta ja correta, seguindo para proxima...")
-        return
+        return False
     except:
         pass
 
     try:
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[3]/a[{x}]/div[@class="jsx-2800942400 exercise-card wrong"]')
         print("   Resposta ja incorreta, seguindo para proxima...")
-        return
+        return False
     except:
         pass
+
+    return True
+
+
+def resolverQuestao(x):
+
+    #Verificar Disponibilidade 
+    print("    ")
 
     #Clicar na questão
     clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[3]/a[{x}]', driver)
 
+
+    if verificarQuestaoDiscursiva():
+        resolverQuestaoDiscursiva()
+        return
+
     # Chutar
     chutes_efetuados = []
 
-    for y in range(1,4):
+    for _ in range(1,4):
         time.sleep(2)
+        print("Escolhendo alternativa aleatória...")
 
         while True:
+            print("Buscando alternativa...")
+            time.sleep(0.5)
+            print("Buscando Numero random...")
             alternativa = random.randint(1,4)
             # print(f'Alternativa: {alternativa}')
+            print("Verificando...")
             if not alternativa in chutes_efetuados:
+                print("Alternativa encontrada...")
                 chutes_efetuados.append(alternativa)
                 print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
                 break
+            else:
+                if len(chutes_efetuados) > 3:
+                    break
+                print(f'Chutes efetuados: {chutes_efetuados}')
+                print(f'Numero {alternativa} ja chutado, tentando novamente...')
 
-
-        if verificarQuestaoDiscursiva():
-            resolverQuestaoDiscursiva()
-            break
+        print(f'Chutes efetuados: {chutes_efetuados}')
 
         #Resolver questão multipla escolha
         print(f'    Efetuado chute.. {alternativa}')
@@ -204,45 +220,62 @@ def resolverQuestao(x):
             print('    Resposta incorreta! ❌')
 
 
-def resolverQuestaoSessaoDeExercicios(x):
-
-    #Verificar Disponibilidade 
-    print("    ")
-    print("   Veriricando Disponibilidade Da Questão de exercicio...")
+def verificarDisponibilidadeQuestaoSessaoExercicios(x):
     try:
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[5]/a[{x}]/div[@class="jsx-2800942400 exercise-card correct"]')
         print("   Resposta ja correta, seguindo para proxima...")
-        return
+        return False
     except:
         pass
 
     try:                            
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[5]/a[{x}]/div[@class="jsx-2800942400 exercise-card wrong"]')
         print("   Resposta ja incorreta, seguindo para proxima...")
-        return
+        return False
     except:
         pass
+    return True
+
+
+def resolverQuestaoSessaoDeExercicios(x):
+
+    #Verificar Disponibilidade 
+    print("    ")
 
     #Clicar na questão
     clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[5]/a[{x}]', driver)
+
+
+    if verificarQuestaoDiscursiva():
+        resolverQuestaoDiscursiva()
+        return
 
     # Chutar
     chutes_efetuados = []
 
     for y in range(1,4):
         time.sleep(2)
+        print("Escolhendo alternativa aleatória...")
 
         while True:
+            print("Buscando alternativa...")
+            time.sleep(0.5)
+            print("Buscando Numero random...")
             alternativa = random.randint(1,4)
             # print(f'Alternativa: {alternativa}')
+            print("Verificando...")
             if not alternativa in chutes_efetuados:
+                print("Alternativa encontrada...")
                 chutes_efetuados.append(alternativa)
                 print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
                 break
+            else:
+                if len(chutes_efetuados) > 3:
+                    break
+                print(f'Chutes efetuados: {chutes_efetuados}')
+                print(f'Numero {alternativa} ja chutado, tentando novamente...')
 
-        if verificarQuestaoDiscursiva():
-            resolverQuestaoDiscursiva()
-            break
+        print(f'Chutes efetuados: {chutes_efetuados}')
 
         #Resolver questão multipla escolha
         print(f'    Efetuado chute.. {alternativa}')
@@ -283,10 +316,14 @@ def resolverTarefa(bloco,tarefa):
         #Começar a resolver questão
         for questao_x in range(1,quantidade_de_questoes + 1):
             time.sleep(1)
-            print(f'  Começando a resolver a questao {questao_x}')
 
-            driver.get(link_da_questao)
-            resolverQuestao(questao_x)
+            print("   Verificando Disponibilidade Da Questão...")
+
+            if verificarDisponibilidadeQuestao(questao_x):
+                print(f'  Começando a resolver a questao {questao_x}')
+
+                driver.get(link_da_questao)
+                resolverQuestao(questao_x)
 
         driver.get(link_da_questao)
 
@@ -303,11 +340,12 @@ def resolverTarefa(bloco,tarefa):
             #Começar a resolver questão
             for questao_x in range(1,quantidade_de_questoes_sessao_exercico + 1):
                 time.sleep(1)
-                print(f'  Começando a resolver a questao {questao_x}')
 
-                driver.get(link_da_questao)
-                resolverQuestaoSessaoDeExercicios(questao_x)
-                pass
+                print("   Veriricando Disponibilidade Da Questão...")
+                if verificarDisponibilidadeQuestaoSessaoExercicios(questao_x): 
+                    print(f'  Começando a resolver a questao {questao_x}')
+                    driver.get(link_da_questao)
+                    resolverQuestaoSessaoDeExercicios(questao_x)
     except:
         print("   Nenhuma questão identificada, seguindo...")
 
@@ -371,7 +409,7 @@ def resolverBlocos():
 
 
 def start():
-    os.system("clear")
+    os.system("cls")
     logar()
     seguirParaApostila()
     resolverBlocos()

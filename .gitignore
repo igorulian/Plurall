@@ -1,3 +1,6 @@
-crendentials.py
+/src/crendentials.py
 ___pycache__
 __pycache__/
+*.log
+/.vscode
+/.vscode/settings.json
