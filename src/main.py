@@ -1,40 +1,87 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 import time
-import crendentials
+# import crendentials
 from buttons import clickClass
 from buttons import clickXPath
 import os
 import random
+import os
 
 
-link_da_apostial = 'https://atividades.plurall.net/material/2580100/'
+print('Escolha o seu navegador de preferência (recomento o uso do Firefox):')
+print('')
+print('1 - Google Chrome')
+print('2 - Firefox')
+print('')
+browser = input('Digite o numero correspondente ao seu navegador (1 ou 2): ')
+os.system('cls')
 
-forcar_bloco = int(input("Digite o bloco que deseja forçar: "))## bloco 28; tarefa 6
+email = input('✉️ Digite seu e-mail do plurall: ')
+os.system('cls')
+
+passw = input('🔑 Digite sua senha do plurall: ')
+os.system('cls')
+
+
+print('Qual o link da apostila que deseja realizar?')
+print('ex: https://atividades.plurall.net/material/2580100/')
+print(' ')
+link_da_apostial = input('Digite o link da apostia que deseja realizar: ')
+os.system('cls')
+
+#link_da_apostial = 'https://atividades.plurall.net/material/2580100/'
+# forcar_bloco = int(input("Digite o bloco que deseja forçar: "))## bloco 28; tarefa 6
+forcar_bloco = 0
 forcar_tarefa = 0
 
 
 
-option = Options()
-option.headless = False
+if browser == '1':
+    from selenium.webdriver.chrome.options import Options
+    option = Options()
+    option.headless = False
+    try: # executable_path=r'C:\Users\IgorU\AppData\Local\Geckodriver\geckodriver.exe'
+        driver = webdriver.Chrome(options=option)
+    except:
+        print('🔧 Caso não possuia o chromedriver, você poderá baixar em: https://chromedriver.chromium.org/downloads')
+        path = input('🔧Não foi possível localizar o path do chromedriver.exe (Chrome), favor digite aqui: ')
+        driver = webdriver.Chrome(executable_path=r'' + path + '', options=option)
 
-driver = webdriver.Firefox(executable_path=r'C:\Users\IgorU\AppData\Local\Geckodriver\geckodriver.exe', options=option)
+if browser == '2':
+    from selenium.webdriver.firefox.options import Options
+    option = Options()
+    option.headless = False
+    try: # executable_path=r'C:\Users\IgorU\AppData\Local\Geckodriver\geckodriver.exe'
+        driver = webdriver.Firefox(options=option)
+    except:
+        print('🔧 Caso não possuia o geckodriver, você poderá baixar em: https://github.com/mozilla/geckodriver/releases')
+        path = input('🔧 Não foi possível localizar o path do geckodriver.exe (Firefox), favor digite aqui: ')
+        driver = webdriver.Firefox(executable_path=r'' + path + '', options=option)
+
+
 
 def logar():
-    print("Autenticando...")
+    print("🔓 Autenticando...")
     driver.get('https://login.plurall.net/login')
     time.sleep(1)
-    driver.find_element_by_xpath('//*[@id="username"]').send_keys(crendentials.email)
+    driver.find_element_by_xpath('//*[@id="username"]').send_keys(email)
     time.sleep(1)
-    driver.find_element_by_xpath('//*[@id="password"]').send_keys(crendentials.passw)
+    driver.find_element_by_xpath('//*[@id="password"]').send_keys(passw)
     time.sleep(1)
     driver.find_element_by_xpath('//*[@id="password"]').send_keys(Keys.ENTER)
-    print("Autenticado com sucesso ✔️")
+
+    time.sleep(2)   
+    try:
+        driver.find_element_by_class_name('alert.alert-error')
+        print('Usuario ou senha incorreta ❌')
+        return False
+    except:
+        print("Autenticado com sucesso ✔️")
+
     print("   ")
-    time.sleep(1)
+    return True
 
 def seguirParaApostila():
     print("Seguindo para area da apostila...")
@@ -42,16 +89,16 @@ def seguirParaApostila():
     time.sleep(2)
 
 def verificarAcerto(link_da_questao):
-    print("Verificando acerto...")
+    print("⏳ Verificando acerto...")
     try:
-        print("Clicando em tentar novamente...")
+        print("  ⏳ Clicando em tentar novamente...")
         btn_agr_nao = driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]/span/div[4]/button")
         btn_agr_nao.click()
         return False
     except:
         try:
             # clica para
-            print("Clicando para ler a apostila...")
+            print("  ⏳ Clicando para ler a apostila...")
             time.sleep(2)
             btn_tire_sua_duvida = driver.find_element_by_xpath("/html/body/div[5]/div/div/div[2]/span/div[1]/a/div")
 
@@ -69,7 +116,7 @@ def verificarAcerto(link_da_questao):
         return True
 
 def verificarQuestaoDiscursiva():
-    print("Verificando questão discursiva....")
+    print("⏳ Verificando questão discursiva....")
     try:
         time.sleep(1)
         #driver.find_element_by_tag_name("textarea")
@@ -81,17 +128,17 @@ def verificarQuestaoDiscursiva():
 def lerOTrem(link_da_questao):
     
     #Ler o trem
-    print("Lendo o trem...")
+    print("📖 Lendo o bagulho lá...")
 
     time.sleep(1.5)
     try:   
         driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[3]/div/div/section/section/a/div").click()       
         time.sleep(2)
     except:
-        print("Trem não encontrado")
+        print("  📘 Bagulho não encontrado")
     
     #Volta para area das questoes
-    print("Voltando para area de questões...")
+    print("  Voltando para area de questões...")
 
     driver.get(link_da_questao)
 
@@ -120,7 +167,7 @@ def getQuantidadeDeQuestoesSecaoExercicios():
 
 
 def verificarSecaoDeExercicios():
-    print("Verificando sessão de execicios")
+    print("⏳ Verificando sessão de execicios")
     time.sleep(0.5)
     try:
         driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[3]/div/section/div/div[5]")
@@ -131,8 +178,8 @@ def verificarSecaoDeExercicios():
 
 def resolverQuestaoDiscursiva():
     ## manda discursiva
-    print("Questao Discursiva identificada!")
-    print("Mandando resposta...")
+    print("📑 Questao Discursiva identificada!")
+    print("  📝 Mandando resposta...")
     # digitar resposta
     driver.find_element_by_tag_name("textarea").send_keys("feito")
     time.sleep(1)
@@ -183,33 +230,33 @@ def resolverQuestao(x):
 
     for _ in range(1,4):
         time.sleep(2)
-        print("Escolhendo alternativa aleatória...")
+        print("🎲 Escolhendo alternativa aleatória...")
 
         while True:
-            print("Buscando alternativa...")
+            # print("Buscando alternativa...")
             time.sleep(0.5)
-            print("Buscando Numero random...")
+            # print("Buscando Numero random...")
             alternativa = random.randint(1,4)
             # print(f'Alternativa: {alternativa}')
-            print("Verificando...")
+            # print("Verificando...")
             if not alternativa in chutes_efetuados:
-                print("Alternativa encontrada...")
+                # print("Alternativa encontrada...")
                 chutes_efetuados.append(alternativa)
-                print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
+                # print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
                 break
             else:
                 if len(chutes_efetuados) > 3:
                     break
-                print(f'Chutes efetuados: {chutes_efetuados}')
-                print(f'Numero {alternativa} ja chutado, tentando novamente...')
+                # print(f'Chutes efetuados: {chutes_efetuados}')
+                # print(f'Numero {alternativa} ja chutado, tentando novamente...')
 
-        print(f'Chutes efetuados: {chutes_efetuados}')
+        # print(f'Chutes efetuados: {chutes_efetuados}')
 
         #Resolver questão multipla escolha
-        print(f'    Efetuado chute.. {alternativa}')
+        # print(f'    Efetuado chute.. {alternativa}')
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]')                 
         clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]',driver)
-        print(f'    Chute {alternativa} efetuado!')
+        print(f'    📌 Chute {alternativa} efetuado!')
 
         time.sleep(2)
 
@@ -255,34 +302,34 @@ def resolverQuestaoSessaoDeExercicios(x):
 
     for y in range(1,4):
         time.sleep(2)
-        print("Escolhendo alternativa aleatória...")
+        print("🎲 Escolhendo alternativa aleatória...")
 
         while True:
-            print("Buscando alternativa...")
+            # print("Buscando alternativa...")
             time.sleep(0.5)
-            print("Buscando Numero random...")
+            # print("Buscando Numero random...")
             alternativa = random.randint(1,4)
             # print(f'Alternativa: {alternativa}')
-            print("Verificando...")
+            # print("Verificando...")
             if not alternativa in chutes_efetuados:
-                print("Alternativa encontrada...")
+                # print("Alternativa encontrada...")
                 chutes_efetuados.append(alternativa)
-                print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
+                # print(f'Alternativa: {alternativa} adicionado a lista de chutes!')
                 break
             else:
                 if len(chutes_efetuados) > 3:
                     break
-                print(f'Chutes efetuados: {chutes_efetuados}')
-                print(f'Numero {alternativa} ja chutado, tentando novamente...')
+                # print(f'Chutes efetuados: {chutes_efetuados}')
+                # print(f'Numero {alternativa} ja chutado, tentando novamente...')
 
-        print(f'Chutes efetuados: {chutes_efetuados}')
+        # print(f'Chutes efetuados: {chutes_efetuados}')
 
         #Resolver questão multipla escolha
-        print(f'    Efetuado chute.. {alternativa}')
+        # print(f'    Efetuado chute.. {alternativa}')
         chutes_efetuados.append(y)
         driver.find_element_by_xpath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]')    
         clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div/section[1]/div[2]/div/div/div/ul/li[{alternativa}]/span[1]',driver)
-        print(f'    Chute {alternativa} efetuado!')
+        print(f'    📌 Chute {alternativa} efetuado!')
 
         time.sleep(2)
 
@@ -295,7 +342,7 @@ def resolverQuestaoSessaoDeExercicios(x):
 def resolverTarefa(bloco,tarefa):   
 
     ##===                  
-    print("  Selecionando a Tarefa...")
+    print("  🔎 Selecionando a Tarefa...")
 
     #Selecionar t/html/body/div[1]/div[2]/div/div[3]/div[2]/div/div[1]/section/section[1]
     clickXPath(f'/html/body/div[1]/div[2]/div/div[3]/div[2]/div/div[{bloco}]/section/section[{tarefa}]',driver)
@@ -410,7 +457,8 @@ def resolverBlocos():
 
 def start():
     os.system("cls")
-    logar()
+    if not logar():
+        return
     seguirParaApostila()
     resolverBlocos()
 
