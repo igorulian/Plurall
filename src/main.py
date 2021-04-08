@@ -7,7 +7,6 @@ from buttons import clickClass
 from buttons import clickXPath
 import os
 import random
-import os
 
 
 print('Escolha o seu navegador de preferência (recomento o uso do Firefox):')
@@ -46,7 +45,8 @@ if browser == '1':
         driver = webdriver.Chrome(options=option)
     except:
         print('🔧 Caso não possuia o chromedriver, você poderá baixar em: https://chromedriver.chromium.org/downloads')
-        path = input('🔧Não foi possível localizar o path do chromedriver.exe (Chrome), favor digite aqui: ')
+        print('🔧 Não foi possível localizar o path do chromedriver.exe (Chrome)')
+        path = input('🔧 Favor digite aqui: ')
         driver = webdriver.Chrome(executable_path=r'' + path + '', options=option)
 
 if browser == '2':
@@ -57,7 +57,8 @@ if browser == '2':
         driver = webdriver.Firefox(options=option)
     except:
         print('🔧 Caso não possuia o geckodriver, você poderá baixar em: https://github.com/mozilla/geckodriver/releases')
-        path = input('🔧 Não foi possível localizar o path do geckodriver.exe (Firefox), favor digite aqui: ')
+        print('🔧 Não foi possível localizar o path do geckodriver.exe (Firefox)')
+        path = input('🔧 Favor digite aqui: ')
         driver = webdriver.Firefox(executable_path=r'' + path + '', options=option)
 
 
