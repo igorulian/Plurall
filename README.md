@@ -12,7 +12,7 @@
     
  Selecione seu navegador de preferência
  
-    Escolha o seu navegador de preferência (recomento o uso do Firefox):
+    Escolha o seu navegador de preferência (recomendo o uso do Firefox):
 
     1 - Google Chrome
     2 - Firefox
